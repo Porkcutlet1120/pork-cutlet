@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>돈까스 연구소 ver.0.0.5</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF1D6;--ink:#3B2314;--red:#E4432D;--mus:#F5B82E;--teal:#2F8F83;--card:#FFF9EC;--line:#3B2314;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2A1A10;--ink:#FFE9C4;--card:#3A2517;--line:#FFE9C4}}
+:root[data-theme="dark"]{--bg:#2A1A10;--ink:#FFE9C4;--card:#3A2517;--line:#FFE9C4}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:18px;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,.big{font-family:'Black Han Sans','Jua','Apple SD Gothic Neo',sans-serif;font-weight:400;letter-spacing:.5px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px;background:var(--mus);border-bottom:3px solid #3B2314}
+nav .logo{font-family:'Black Han Sans',sans-serif;color:#3B2314;font-size:20px;margin-right:10px}
+nav button{font:inherit;font-size:16px;border:2.5px solid #3B2314;background:#FFF9EC;color:#3B2314;border-radius:99px;padding:5px 14px;cursor:pointer;transition:.15s}
+nav button:hover{transform:translateY(-2px) rotate(-2deg);background:#fff}
+nav button.on{background:var(--red);color:#fff;box-shadow:3px 3px 0 #3B2314}
+main{max-width:1000px;margin:0 auto;padding:28px 18px 60px}
+.page{display:none;animation:in .5s}.page.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(20px)}}
+.btn{font-family:'Black Han Sans',sans-serif;font-size:22px;background:var(--red);color:#fff;border:3px solid #3B2314;border-radius:16px;padding:12px 28px;cursor:pointer;box-shadow:5px 5px 0 #3B2314;transition:.12s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #3B2314}.btn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 #3B2314}
+.btn.alt{background:var(--mus);color:#3B2314}
+.tag{display:inline-block;background:var(--teal);color:#fff;border:2.5px solid #3B2314;border-radius:99px;padding:2px 14px;font-size:15px;transform:rotate(-3deg)}
+/* hero */
+.hero{text-align:center;position:relative}
+.hero h1{font-size:clamp(42px,9vw,88px);line-height:1.05;color:var(--red);text-shadow:4px 4px 0 var(--mus);margin:10px 0}
+.hero p{font-size:21px;margin-bottom:14px}
+.stage{position:relative;width:360px;max-width:92%;height:270px;margin:6px auto 14px}
+.sun{position:absolute;inset:-20px 0 0;margin:auto;width:320px;height:320px;max-width:100%;border-radius:50%;background:repeating-conic-gradient(var(--mus) 0 10deg,transparent 10deg 20deg);opacity:.35;animation:spin 40s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cut{position:absolute;left:0;top:20px;width:100%;height:230px;display:flex;filter:drop-shadow(5px 6px 0 #3B2314);animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(1.5deg)}}
+.half{width:50%;height:100%;overflow:hidden;transition:transform .7s cubic-bezier(.6,-.2,.3,1.3)}
+.half svg{width:200%;height:100%;display:block}.half.r svg{margin-left:-100%}
+.cut.sliced{animation:none}.cut.sliced .l{transform:translateX(-46px) rotate(-8deg)}.cut.sliced .r{transform:translateX(46px) rotate(8deg)}
+.knife{position:absolute;left:50%;top:-140px;font-size:96px;transform:translateX(-50%) rotate(-20deg);transition:top .45s ease-in;z-index:3;pointer-events:none}
+.knife.go{top:70px}
+.sparkle{position:absolute;font-size:28px;animation:tw 2s infinite}@keyframes tw{50%{transform:scale(1.4) rotate(20deg);opacity:.5}}
+.marquee{overflow:hidden;white-space:nowrap;border-block:3px solid var(--line);background:var(--red);color:#fff;margin:30px -18px 0;padding:8px 0;font-family:'Black Han Sans',sans-serif}
+.marquee span{display:inline-block;animation:mq 22s linear infinite}@keyframes mq{to{transform:translateX(-50%)}}
+/* common */
+.head{text-align:center;margin-bottom:24px}.head h2{font-size:clamp(32px,6vw,52px);color:var(--red);text-shadow:3px 3px 0 var(--mus)}
+.card{background:var(--card);border:3px solid var(--line);border-radius:20px;padding:18px;box-shadow:6px 6px 0 var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}
+/* quiz */
+#quiz{max-width:620px;margin:auto;text-align:center}
+.prog{height:14px;border:3px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:18px}.prog i{display:block;height:100%;width:0;background:var(--red);transition:.4s}
+.q{font-size:26px;margin-bottom:16px;font-family:'Black Han Sans',sans-serif}
+.opt{display:block;width:100%;margin:10px 0;font:inherit;font-size:19px;padding:13px;border:3px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;cursor:pointer;transition:.15s}
+.opt:hover{background:var(--mus);color:#3B2314;transform:scale(1.03) rotate(-.5deg)}
+.res .em{font-size:80px;animation:bob 2s infinite}
+/* codex */
+.dex{position:relative;transition:.2s}.dex:hover{transform:translateY(-6px) rotate(-1deg)}.dex.hl{outline:5px dashed var(--red);outline-offset:4px}
+.dex .pic{height:130px;display:flex;justify-content:center;background:var(--mus);border-radius:12px;border:2.5px solid var(--line);margin-bottom:10px}
+.dex .pic svg{height:100%}.dex h3{font-size:22px}.dex small{opacity:.8;display:block;margin:4px 0 8px;font-size:15px}
+.st{display:grid;grid-template-columns:62px 1fr 34px;gap:6px;align-items:center;font-size:14px;margin:4px 0}
+.bar{height:11px;border:2px solid var(--line);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width 1s cubic-bezier(.3,1.4,.5,1)}
+.dex .info{font-size:15px;margin-top:8px;border-top:2px dashed var(--line);padding-top:6px}
+/* sauce */
+.sauces{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-bottom:22px}
+.sauce{cursor:pointer;font:inherit;text-align:center;width:150px;background:var(--card);color:var(--ink);border:3px solid var(--line);border-radius:18px;padding:12px;transition:.2s}
+.sauce:hover{transform:rotate(-3deg) scale(1.05)}.sauce.on{background:var(--red);color:#fff;box-shadow:5px 5px 0 var(--line)}
+.sauce b{display:block;font-size:44px}
+.pour{height:14px;width:60%;margin:0 auto 10px;border-radius:0 0 30px 30px}
+.lab .row{display:grid;grid-template-columns:110px 1fr 44px;gap:8px;align-items:center;margin:8px 0}
+.lab .row.top{color:var(--red);font-weight:bold}.lab .row.top .bar i{background:var(--red)}
+/* reviews */
+.rv{transition:.25s;cursor:default}.rv:nth-child(odd){transform:rotate(-1.5deg)}.rv:nth-child(even){transform:rotate(1.5deg)}
+.rv:hover{transform:rotate(0) scale(1.05);background:var(--mus);color:#3B2314}
+.rv q{font-family:'Black Han Sans',sans-serif;font-size:24px;display:block;line-height:1.25;quotes:none}
+.rv p{margin-top:10px;font-size:15px;opacity:.85}
+.stamp{display:inline-block;border:3px solid var(--red);color:var(--red);border-radius:8px;padding:0 8px;transform:rotate(-8deg);font-size:14px;margin-top:8px}
+.dbs{font-size:13px;border:2px solid #3B2314;border-radius:99px;padding:2px 10px;background:#FFF9EC;color:#3B2314}.dbs.ok{background:#9BE3C3}.dbs.off{background:#FFC9C0}
+.rvf{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px}.rvf input{font:inherit;padding:10px 14px;border:3px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}#rvQ{flex:1 1 280px}
+.modal{position:fixed;inset:0;background:rgba(40,20,10,.6);display:none;align-items:center;justify-content:center;z-index:30;padding:18px}.modal.on{display:flex}
+.mbox{width:100%;max-width:380px;text-align:center}.mbox input{display:block;width:100%;margin:10px 0;font:inherit;padding:11px 14px;border:3px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.tabs{display:flex;gap:8px;margin:12px 0}.tabs button{flex:1;font:inherit;padding:8px;border:3px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);cursor:pointer}.tabs button.on{background:var(--red);color:#fff}
+#am{min-height:24px;font-size:15px;color:var(--red)}.mbox .btn{font-size:18px;padding:9px 20px;margin:4px}
+.who{font-size:15px;color:#3B2314;margin:0 4px}.del{float:right;font:inherit;font-size:13px;border:2px solid var(--line);background:transparent;color:inherit;border-radius:99px;padding:0 9px;cursor:pointer}.del:hover{background:var(--red);color:#fff}
+#tt{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:99px;transition:.4s;z-index:20}#tt.on{transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <span class="logo">🍖 돈까스 연구소</span>
+  <button data-p="home" class="on">메인</button><button data-p="quiz">바삭함 테스트</button><button data-p="dex">돈까스 도감</button><button data-p="lab">소스 실험실</button><button data-p="rev">연구원의 한마디</button><span id="db" class="dbs off">● 연결 확인 중</span><span id="authbox"></span>
+</nav>
+<main>
+<section class="page on hero" id="home">
+  <span class="tag">SINCE 1899 · 바삭 연구 중</span>
+  <h1>한 입에<br>인생이 바삭</h1>
+  <p>오늘의 고민은 접어두고, 일단 썰고 시작하자.</p>
+  <div class="stage">
+    <div class="sun"></div>
+    <span class="sparkle" style="left:0;top:30px">✨</span><span class="sparkle" style="right:0;top:60px;animation-delay:.7s">✨</span>
+    <div class="knife" id="knife">🔪</div>
+    <div class="cut" id="cut"><div class="half l"></div><div class="half r"></div></div>
+  </div>
+  <button class="btn" id="slice">🔪 돈까스 썰기</button>
+  <div class="marquee"><span id="mq"></span></div>
+</section>
+
+<section class="page" id="quiz">
+  <div class="head"><h2>바삭함 테스트</h2><p>4가지 질문으로 오늘의 돈까스를 찾아드립니다</p></div>
+  <div class="card" id="qbox"></div>
+</section>
+
+<section class="page" id="dex">
+  <div class="head"><h2>돈까스 도감</h2><p>카드에 마우스를 올려 스탯을 확인하세요</p></div>
+  <div class="grid" id="dexg"></div>
+</section>
+
+<section class="page" id="lab">
+  <div class="head"><h2>소스 실험실</h2><p>소스를 고르면 궁합 1위 메뉴가 바뀝니다</p></div>
+  <div class="sauces" id="sauces"></div>
+  <div class="card lab" id="labres"></div>
+</section>
+
+<section class="page" id="rev">
+  <div class="head"><h2>연구원들의 한마디</h2><p>가상의 연구원들이 남긴 (과장된) 실험 후기</p></div>
+  <div class="grid" id="rvg"></div>
+  <div class="rvf"><input id="rvQ" maxlength="60" placeholder="예: 첫 입부터 합격! 치즈가 23cm 늘어났어요 (60자 이내)"><input id="rvA" maxlength="20" placeholder="예: 연구원 김바삭 (미입력 시 익명 연구원)"><button class="btn alt" id="rvSend">후기 등록</button></div>
+</section>
+</main>
+<div class="modal" id="modal"><div class="card mbox"><h3 id="mt" style="font-size:28px">로그인</h3>
+<div class="tabs"><button id="tL" class="on">로그인</button><button id="tS">회원가입</button></div>
+<input id="aN" maxlength="20" placeholder="예: 바삭한연구원 (20자 이내, 후기 작성자명으로 표시)" style="display:none"><input id="aE" type="email" placeholder="예: donkatsu@gmail.com" autocomplete="email"><input id="aP" type="password" placeholder="예: 영문+숫자 섞어 6자 이상" autocomplete="current-password">
+<p id="am"></p><button class="btn" id="aGo">로그인</button><button class="btn alt" id="aX">닫기</button></div></div>
+<div id="tt"></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+/* ===== Supabase 설정 (ver.0.0.2) =====
+   key에는 publishable(anon) 키만 넣으세요. secret/service_role 키는 절대 넣지 마세요.
+   로컬 Supabase를 쓰면 url을 http://127.0.0.1:54321 로 바꾸세요. key가 비어 있으면 내장 데이터로 동작합니다. */
+const SB={url:'https://clvmyhtgctqpwohrvmui.supabase.co',key:'sb_publishable_f0TezxD5Ur8PmEUQM39eoQ_0OY-iNul'};
+const sbOn=()=>!!SB.key;
+/* ===== 인증 (Supabase Auth · JWT) =====
+   로그인하면 Supabase가 JWT(access_token)를 발급하고, 이후 모든 DB 요청에 Authorization: Bearer <JWT>로 전송합니다. */
+let S=null;try{S=JSON.parse(localStorage.getItem('dk.s')||'null')}catch(e){}
+function saveS(s){S=s;try{s?localStorage.setItem('dk.s',JSON.stringify(s)):localStorage.removeItem('dk.s')}catch(e){}renderAuth();}
+async function au(path,body,tok){
+  const r=await fetch(SB.url+'/auth/v1/'+path,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',...(tok?{Authorization:'Bearer '+tok}:{})},body:JSON.stringify(body||{})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.msg||j.error_description||j.message||('오류 '+r.status));
+  return j;
+}
+const mkS=j=>({access_token:j.access_token,refresh_token:j.refresh_token,exp:Date.now()/1000+(j.expires_in||3600),user:{id:j.user.id,email:j.user.email,name:(j.user.user_metadata||{}).name||(j.user.email||'').split('@')[0]}});
+async function refresh(){const j=await au('token?grant_type=refresh_token',{refresh_token:S.refresh_token});saveS(mkS(j));}
+async function sb(path,opt={},retry=true){
+  if(S&&S.exp-60<Date.now()/1000){try{await refresh()}catch(e){saveS(null)}}
+  const tok=S?S.access_token:(SB.key.startsWith('eyJ')?SB.key:null);
+  const r=await fetch(SB.url+'/rest/v1/'+path,{...opt,headers:{apikey:SB.key,...(tok?{Authorization:'Bearer '+tok}:{}),'Content-Type':'application/json',...(opt.headers||{})}});
+  if(r.status===401&&S&&retry){try{await refresh();return sb(path,opt,false)}catch(e){saveS(null)}}
+  if(!r.ok)throw new Error(r.status+' '+await r.text());
+  return r.json().catch(()=>null);
+}
+const setDb=(t,ok)=>{const e=$('#db');e.textContent=t;e.className='dbs '+(ok?'ok':'off');};
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LOOK={gy:{seed:3,sauce:'#7A3B14'},jp:{seed:5},ch:{seed:9,cheese:1},sp:{seed:13,spicy:1,crust:'#C9561F',hi:'#F08A3C'}};
+/* 돈까스 SVG (외부 이미지 없이 직접 그림) */
+function katsu(o={}){
+  const c=o.crust||'#D98A2B', hi=o.hi||'#F2B84B';
+  let seed=o.seed||7, r=()=>(seed=(seed*9301+49297)%233280)/233280, dots='';
+  for(let i=0;i<70;i++){dots+=`<circle cx="${30+r()*240}" cy="${25+r()*150}" r="${1.5+r()*3.5}" fill="${r()>.5?hi:'#9C5A16'}" opacity=".75"/>`}
+  const extra=o.cheese?`<path d="M60 175 q10 30 20 5 q10 35 22 0 q12 28 24 -2" fill="#FFD84A" stroke="#3B2314" stroke-width="4"/>`:'';
+  const chili=o.spicy?`<g fill="#E4432D" stroke="#3B2314" stroke-width="2.5"><ellipse cx="90" cy="70" rx="16" ry="6" transform="rotate(-25 90 70)"/><ellipse cx="200" cy="100" rx="16" ry="6" transform="rotate(30 200 100)"/><ellipse cx="150" cy="140" rx="16" ry="6" transform="rotate(-10 150 140)"/></g>`:'';
+  const sauce=o.sauce?`<path d="M40 60 Q150 20 260 60 Q290 110 250 160 Q150 190 50 160 Q10 110 40 60Z" fill="${o.sauce}" opacity=".85"/>`:'';
+  return `<svg viewBox="0 0 300 220" preserveAspectRatio="none"><path d="M35 70 Q60 15 150 20 Q250 15 268 75 Q295 125 255 172 Q200 205 140 198 Q70 205 38 165 Q8 120 35 70Z" fill="${c}" stroke="#3B2314" stroke-width="5"/>${dots}${sauce}${chili}${extra}</svg>`;
+}
+const K={crust:'#D98A2B'};
+$$('.half').forEach(h=>h.innerHTML=katsu({seed:11}));
+
+/* 데이터 */
+let M=[
+ {id:'gy',n:'경양식 돈까스',e:'🍽️',c:{seed:3,sauce:'#7A3B14'},d:'추억의 함박 소스 옷을 입은 클래식. 수프가 먼저 나오면 정답.',s:'데미글라스',combo:'크림수프 + 옥수수 샐러드 + 밥',st:{바삭함:65,두께:55,치즈력:5,매운맛:0,소스력:98}},
+ {id:'jp',n:'일식 로스카츠',e:'🍚',c:{seed:5},d:'두툼한 등심에 빵가루 갑옷. 소금만 찍어도 완성되는 정통파.',s:'돈카츠 소스 · 소금',combo:'양배추 + 된장국 + 흰밥',st:{바삭함:96,두께:88,치즈력:0,매운맛:0,소스력:60}},
+ {id:'ch',n:'치즈 돈까스',e:'🧀',c:{seed:9,cheese:1},d:'칼을 넣는 순간 늘어나는 치즈 폭포. 영상 찍을 준비 하세요.',s:'돈카츠 소스',combo:'피클 + 콜라 + 밥',st:{바삭함:80,두께:70,치즈력:99,매운맛:0,소스력:70}},
+ {id:'sp',n:'매운 돈까스',e:'🌶️',c:{seed:13,spicy:1,crust:'#C9561F',hi:'#F08A3C'},d:'고추 향이 코끝을 치고 지나가는 불맛 버전. 물 준비는 필수.',s:'매콤 양념',combo:'냉면 + 계란찜 + 찬물 3잔',st:{바삭함:85,두께:62,치즈력:10,매운맛:92,소스력:75}}
+];
+let SA=[
+ {n:'데미글라스',e:'🟤',col:'#7A3B14',q:'진하고 묵직한 추억의 맛. 경양식에서 압도적!',m:{gy:98,jp:55,ch:72,sp:40}},
+ {n:'돈카츠 소스',e:'🟠',col:'#A5401A',q:'새콤달콤 정석 조합. 치즈와도 사이가 좋습니다.',m:{gy:60,jp:90,ch:94,sp:58}},
+ {n:'소금',e:'⚪',col:'#e8e2d4',q:'고기 본연의 맛 승부. 두꺼울수록 빛나요.',m:{gy:20,jp:99,ch:45,sp:30}},
+ {n:'매콤 양념',e:'🔴',col:'#D02A1A',q:'입안 불꽃놀이. 매운 돈까스와 최강 궁합!',m:{gy:35,jp:50,ch:65,sp:97}}
+];
+let RV=[
+ ['첫 입부터 합격','연구원 김바삭 · 바삭 측정 담당'],['치즈 늘어남 23cm','연구원 박쭈욱 · 치즈 길이 측정'],
+ ['소스가 튀김 옷을 못 뚫음 (칭찬)','연구원 이바삭 · 내구성 테스트'],['수프 먼저 먹고 방심했다가 밥 추가','연구원 최든든 · 포만감 분석'],
+ ['눅눅함 0%, 행복 120%','연구원 정튀김 · 습도 담당'],['매운맛 5단계 중 6단계 확인','연구원 한화끈 · 화력 검증']
+];
+
+/* 페이지 전환 */
+function go(p){
+  $$('.page').forEach(x=>x.classList.toggle('on',x.id===p));
+  $$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+  scrollTo({top:0,behavior:'smooth'});
+  if(p==='dex')setTimeout(()=>$$('.bar i',$('#dex')).forEach(i=>i.style.width=i.dataset.w+'%'),100);
+  if(p==='quiz')startQuiz();
+}
+$$('nav button[data-p]').forEach(b=>b.onclick=()=>go(b.dataset.p));
+
+/* 메인: 돈까스 썰기 */
+const mqText='🍖 바삭 · 촉촉 · 든든 &nbsp; ';$('#mq').innerHTML=mqText.repeat(24);
+let cutting=false;
+$('#slice').onclick=()=>{
+  if(cutting)return;cutting=true;
+  $('#knife').classList.add('go');
+  setTimeout(()=>{$('#cut').classList.add('sliced');toast('사각! 🔪 바삭한 소리가 났습니다');},420);
+  setTimeout(()=>{go('dex');cutting=false;$('#knife').classList.remove('go');$('#cut').classList.remove('sliced');},1500);
+};
+
+/* 도감 */
+function renderDex(){
+$('#dexg').innerHTML=M.map(m=>`<div class="card dex" id="d-${m.id}"><div class="pic">${katsu(m.c)}</div><h3>${m.e} ${m.n}</h3><small>${m.d}</small>`+
+ Object.entries(m.st).map(([k,v])=>`<div class="st"><span>${k}</span><div class="bar"><i data-w="${v}"></i></div><b>${v}</b></div>`).join('')+
+ `<div class="info">🥣 소스: ${m.s}<br>🍱 추천 조합: ${m.combo}</div></div>`).join('');
+}
+
+/* 바삭함 테스트 */
+const Q=[
+ ['오늘 기분은?',[['든든하게 채우고 싶다','gy'],['깔끔하고 진한 맛이 좋다','jp'],['쫄깃 늘어나는 게 끌린다','ch'],['스트레스 풀고 싶다','sp']]],
+ ['식감은 어떤 게 좋아?',[['부드럽고 촉촉한','gy'],['겉바속촉 정석','jp'],['녹진하고 쫀득한','ch'],['얼얼하게 자극적인','sp']]],
+ ['같이 먹고 싶은 사이드는?',[['크림수프','gy'],['양배추 + 된장국','jp'],['피클 + 콜라','ch'],['냉면','sp']]],
+ ['소스 철학은?',[['푹 적셔야 제맛','gy'],['소금이나 살짝만','jp'],['소스 옆에 두고 찍먹','ch'],['매콤해야 소스지','sp']]]
+];
+let qi=0,score={};
+function startQuiz(){qi=0;score={gy:0,jp:0,ch:0,sp:0};renderQ();}
+function renderQ(){
+  const b=$('#qbox');
+  if(qi>=Q.length){
+    const w=Object.keys(score).sort((a,b)=>score[b]-score[a])[0], m=M.find(x=>x.id===w)||M[0];logQuiz(w);
+    b.innerHTML=`<div id="quiz" class="res"><div class="prog"><i style="width:100%"></i></div><div class="em">${m.e}</div><span class="tag">당신의 바삭 유형</span><h2 style="margin:10px 0">${m.n}</h2><p>${m.d}</p><p style="margin:8px 0">추천 소스: <b>${m.s}</b></p><button class="btn" id="toDex">도감에서 보기</button> <button class="btn alt" id="again">다시 테스트</button></div>`;
+    $('#toDex').onclick=()=>{go('dex');$$('.dex').forEach(d=>d.classList.remove('hl'));$('#d-'+w).classList.add('hl');};
+    $('#again').onclick=startQuiz;return;
+  }
+  const [q,o]=Q[qi];
+  b.innerHTML=`<div id="quiz"><div class="prog"><i style="width:${qi/Q.length*100}%"></i></div><p>Q${qi+1} / ${Q.length}</p><div class="q">${q}</div>`+o.map(([t,k])=>`<button class="opt" data-k="${k}">${t}</button>`).join('')+'</div>';
+  $$('.opt',b).forEach(x=>x.onclick=()=>{score[x.dataset.k]++;qi++;renderQ();});
+}
+
+function logQuiz(w){if(sbOn())sb('donkatsu_quiz_results',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({result_id:w})}).catch(()=>{});}
+/* 소스 실험실 */
+function renderSauces(){$('#sauces').innerHTML=SA.map((s,i)=>`<button class="sauce" data-i="${i}"><b>${s.e}</b><div class="pour" style="background:${s.col}"></div>${s.n}</button>`).join('');
+function pick(i){
+  const s=SA[i];$$('.sauce').forEach((x,j)=>x.classList.toggle('on',j===i));
+  const top=Object.keys(s.m).sort((a,b)=>s.m[b]-s.m[a])[0];
+  $('#labres').innerHTML=`<h3 style="font-size:26px;margin-bottom:4px">${s.n} 실험 결과</h3><p style="margin-bottom:10px">${s.q}</p>`+
+   M.map(m=>`<div class="row ${m.id===top?'top':''}"><span>${m.e} ${m.n.split(' ')[0]}</span><div class="bar"><i style="width:0" data-w="${s.m[m.id]}"></i></div><b>${s.m[m.id]}</b></div>`).join('')+
+   `<p style="margin-top:12px">🏆 오늘의 추천: <b>${M.find(m=>m.id===top).n}</b></p>`;
+  requestAnimationFrame(()=>setTimeout(()=>$$('#labres .bar i').forEach(x=>x.style.width=x.dataset.w+'%'),30));
+}
+$$('.sauce').forEach(b=>b.onclick=()=>pick(+b.dataset.i));pick(0);}
+
+/* 후기 */
+function renderRev(){
+$('#rvg').innerHTML=RV.map(([q,w,id,uid],i)=>`<div class="card rv"><q>“${esc(q)}”</q><p>${esc(w)}</p><span class="stamp">${['합격','인증','검증됨'][i%3]}</span>${S&&uid&&uid===S.user.id?`<button class="del" data-id="${id}">삭제</button>`:''}</div>`).join('');
+}
+$('#rvg').onclick=async e=>{
+  const d=e.target.closest('.del');if(!d)return;
+  try{await sb('donkatsu_reviews?id=eq.'+d.dataset.id,{method:'DELETE',headers:{Prefer:'return=minimal'}});toast('삭제했습니다');await loadRev();}
+  catch(err){console.warn(err);toast('삭제 실패');}
+};
+async function loadRev(){
+  const r=await sb('donkatsu_reviews?select=id,quote,author,user_id&order=created_at.desc&limit=12');
+  if(r&&r.length){RV=r.map(x=>[x.quote,x.author,x.id,x.user_id]);renderRev();}
+}
+$('#rvSend').onclick=async()=>{
+  const q=$('#rvQ').value.trim();
+  if(!q)return toast('후기를 입력해 주세요');
+  if(!sbOn()){RV.unshift([q,$('#rvA').value.trim()||'익명 연구원']);renderRev();$('#rvQ').value='';return toast('오프라인: 화면에만 표시됩니다');}
+  if(!S){openAuth('login');return toast('후기를 남기려면 로그인이 필요합니다');}
+  try{await sb('donkatsu_reviews',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({quote:q,author:S.user.name.slice(0,20)})});$('#rvQ').value='';toast('후기가 등록되었습니다!');await loadRev();}
+  catch(e){console.warn(e);toast('저장 실패: 로그인 상태와 DB 설정을 확인하세요');}
+};
+
+/* 로그인 UI */
+let mode='login';
+function openAuth(m){mode=m;$('#modal').classList.add('on');$('#am').textContent='';$('#mt').textContent=m==='login'?'로그인':'회원가입';$('#aGo').textContent=m==='login'?'로그인':'가입하기';
+  $('#tL').classList.toggle('on',m==='login');$('#tS').classList.toggle('on',m!=='login');$('#aN').style.display=m==='login'?'none':'block';
+  $('#aE').placeholder=m==='login'?'가입한 이메일 (예: donkatsu@gmail.com)':'예: donkatsu@gmail.com (인증 메일을 받을 수 있는 주소)';
+  $('#aP').placeholder=m==='login'?'가입할 때 만든 비밀번호':'예: 영문+숫자 섞어 6자 이상';$('#aP').autocomplete=m==='login'?'current-password':'new-password';}
+const closeAuth=()=>$('#modal').classList.remove('on');
+function renderAuth(){
+  const b=$('#authbox');if(!b)return;
+  if(!sbOn()){b.innerHTML='';return;}
+  b.innerHTML=S?`<span class="who">👤 ${esc(S.user.name)}</span><button id="outBtn">로그아웃</button>`:'<button id="inBtn">로그인 / 가입</button>';
+  if(S)$('#outBtn').onclick=async()=>{await logOut();toast('로그아웃 되었습니다');};else $('#inBtn').onclick=()=>openAuth('login');
+  renderRev();
+}
+async function logOut(){try{if(S)await au('logout',{},S.access_token)}catch(e){}saveS(null);}
+const KOR=m=>/Invalid login/i.test(m)?'이메일 또는 비밀번호가 올바르지 않습니다':/not confirmed/i.test(m)?'이메일 인증을 먼저 완료해 주세요':/already registered/i.test(m)?'이미 가입된 이메일입니다':/at least|weak|short/i.test(m)?'비밀번호는 6자 이상이어야 합니다':/rate limit/i.test(m)?'요청이 너무 많습니다. 잠시 후 다시 시도하세요':m;
+async function submitAuth(){
+  const email=$('#aE').value.trim(),pw=$('#aP').value,name=$('#aN').value.trim(),m=$('#am');
+  if(!email||pw.length<6){m.textContent='이메일과 6자 이상의 비밀번호를 입력하세요';return;}
+  if(mode==='signup'&&!name){m.textContent='닉네임을 입력하세요';return;}
+  m.textContent='처리 중...';
+  try{
+    if(mode==='login'){saveS(mkS(await au('token?grant_type=password',{email,password:pw})));closeAuth();toast('환영합니다, '+S.user.name+'님!');}
+    else{const j=await au('signup',{email,password:pw,data:{name}});
+      if(j.access_token){saveS(mkS(j));closeAuth();toast('가입 완료! 로그인되었습니다');}
+      else{openAuth('login');m.textContent='가입 완료! 이메일 인증 후 로그인하세요';toast('인증 메일을 확인해 주세요');}}
+  }catch(e){m.textContent=KOR(e.message);}
+}
+$('#tL').onclick=()=>openAuth('login');$('#tS').onclick=()=>openAuth('signup');$('#aX').onclick=closeAuth;$('#aGo').onclick=submitAuth;
+$('#modal').onclick=e=>{if(e.target.id==='modal')closeAuth();};
+['aE','aP','aN'].forEach(i=>$('#'+i).onkeydown=e=>{if(e.key==='Enter')submitAuth();});
+
+/* Supabase 데이터 로드 (실패 시 내장 데이터 유지) */
+async function loadAll(){
+  if(!sbOn())return setDb('● 오프라인 (키 미입력)',0);
+  try{
+    const [m,s,r]=await Promise.all([sb('donkatsu_menus?select=*&order=sort'),sb('donkatsu_sauces?select=*&order=sort'),sb('donkatsu_reviews?select=id,quote,author,user_id&order=created_at.desc&limit=12')]);
+    if(m&&m.length)M=m.map(x=>({id:x.id,n:x.name,e:x.emoji,c:LOOK[x.id]||{seed:[...x.id].reduce((a,c)=>a+c.charCodeAt(0),1)},d:x.description,s:x.sauce,combo:x.combo,st:{바삭함:x.crunch,두께:x.thickness,치즈력:x.cheese,매운맛:x.spicy,소스력:x.sauce_power}}));
+    if(s&&s.length)SA=s.map(x=>({n:x.name,e:x.emoji,col:x.color,q:x.quote,m:x.match}));
+    if(r&&r.length)RV=r.map(x=>[x.quote,x.author,x.id,x.user_id]);
+    renderDex();renderSauces();renderRev();setDb('● Supabase 연결됨',1);
+  }catch(e){console.warn(e);setDb('● 연결 실패 · 내장 데이터',0);}
+}
+renderDex();renderSauces();renderRev();renderAuth();loadAll();
+
+function toast(t){const e=$('#tt');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1400);}
+</script>
+</body>
+</html>
